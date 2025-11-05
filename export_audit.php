@@ -1,0 +1,12 @@
+<?php require_once 'auth.php'; require_admin(); include 'db.php';
+header('Content-Type:text/csv');
+header('Content-Disposition: attachment; filename="audit_log.csv"');
+$w=[];
+if (!empty($_GET['start'])) $w[]="happened_at >= '".$conn->real_escape_string($_GET['start'])." 00:00:00'";
+if (!empty($_GET['end'])) $w[]="happened_at <= '".$conn->real_escape_string($_GET['end'])." 23:59:59'";
+if (!empty($_GET['action'])) $w[]="action LIKE '%".$conn->real_escape_string($_GET['action'])."%'";
+if (!empty($_GET['entity'])) $w[]="entity LIKE '%".$conn->real_escape_string($_GET['entity'])."%'";
+$where = $w ? ('WHERE '.implode(' AND ', $w)) : '';
+$sql = "SELECT happened_at, actor, action, entity, entity_id, ip, details FROM audit_log $where ORDER BY happened_at DESC, id DESC";
+$out=fopen('php://output','w'); fputcsv($out,['When','Actor','Action','Entity','Entity ID','IP','Details']);
+$res = $conn->query($sql); while($row=$res->fetch_assoc()){ fputcsv($out,$row); } exit;
