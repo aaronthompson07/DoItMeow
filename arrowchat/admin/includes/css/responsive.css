@@ -1,0 +1,399 @@
+.slicknav_menu {
+    display: none;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    opacity: 1;
+}
+@media screen and (max-width: 750px) {
+    .js #menu{
+        display: none;
+    }
+    .js .slicknav_menu {
+        display: block;
+        width: 100%;
+        position: fixed;
+        z-index: 22;
+        top: 40px;
+    }
+}
+/*small and mobile devices*/
+@media only screen and (max-width: 750px){
+	body,html{
+		padding-top: 46px;
+	}
+	.login{
+		padding-top: 0;
+	}
+    #wrapper{
+        margin: 0px;
+    }
+    .breadcrumbs{
+        padding: 15px;
+    }
+    #content{
+        width: 92%;
+    }
+    #leftcontent{
+        width: 100%;
+    	padding: 0px;
+    }
+    .feature-disabled{
+    	margin-top: 0px;
+    }
+    .admin_title_bg{
+    	padding-bottom: 0px;
+	    width: 100%;
+	    margin-bottom: 0px;
+	    padding-top: 0px;
+    }
+    .admin_title_bg ul{
+    	display: none;
+    }
+    #rightcontent{
+        width: 100%;
+        left: 0px;
+    }
+    .notify-msg{
+        width: 100%;
+    }
+    .row .title_bg{
+        width: 100%;
+    }
+    .title_bg{
+        width: 100%;
+    }
+    iframe{
+        width: 100% !important;
+    }
+    .footer{
+        height: auto;
+	    padding: 15px 5%;
+	    float: left;
+	    width: 90%;
+    }
+    .h-0{
+    	height: auto !important;
+    }
+    .selectionText, .selectionArea{
+        width: 96% !important;
+    	padding: 6px 2% !important;
+    }
+    .selectionBox dt{
+        width: 30%;
+        padding-right: 5%;
+    }
+    .selectionBox dd{
+        width: 65%;
+    }
+    .selectionBox select{
+        width: 100% !important;
+    }
+    .breadcrumbs_container{
+        width: 100%;
+    }
+    .footercontent{
+    	width: 100%;
+    }
+    .col-2{
+    	width: 100% !important;
+    	height: auto !important;
+    	margin-bottom: 15px;
+    }
+    table.mceLayout, textarea.richEditor {
+       width: 100% !important;
+    }
+    .selectionBox dt label{
+    	margin-left: 0px;
+    }
+    .selectionBox dd .explain{
+    	margin-right: 0px;
+    }
+    .slider{
+    	max-width: 90%;
+    	width: 100%;
+    }
+    .slider-number{
+    	top: -15px;
+    	right: -10px;
+    }
+    .secondaryContent{
+    	padding: 15px 7px;
+    }
+    .scrollable h4 a{
+    	padding: 15px 5px;
+    }
+    .success-msg-wrapper{
+    	width: 100%;
+    }
+    #template_data{
+    	padding: 2%;
+    	width: 96%;
+    }
+    #topnavcontent{
+    	width: 100%;
+    }
+    /*.mceEditor{
+    	overflow: scroll;
+	    width: 100%;
+	    display: block;
+    }*/
+    /*login form*/
+    .login-form input{
+    	width: 100%;
+    }
+    .login-form .input-box{
+    	width: 100%;
+    	float: left;
+    }
+    .login-form .input-text{
+    	width: 100%;
+    	margin-bottom: 10px;
+    	text-align: left;
+    	float: left;
+    }
+    .p-t-50{
+    	padding-top: 50px !important;
+    }
+    /*end*/
+    #topnav{
+    	height: 35px;
+    }
+    #topnavcontent div{
+    	padding: 0px !important;
+    	margin: 0px !important;
+    	padding-top: 5px !important;
+    	top: 0px !important;
+    }
+    #topnavcontent div:first-child{
+    	padding: 0px !important;
+    }
+    #topnavcontent #logo{
+    	position: fixed;
+    	top: 48px;
+    }
+    #subnavwrapper{
+    	top: 36px;
+    }
+    .mceToolbar td {
+		display: inline-block;
+		float: left;
+		min-height: 32px;
+	}
+	body{
+		overflow-x: hidden;
+	}
+	.slicknav_menu li > a .bubble-top, .slicknav_menu ul li ul a .bubble{
+
+		padding: 0 3px;
+		text-shadow: none;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		background-color: #fa3e3e;
+		color: #fff;
+		margin-left: 5px;
+		font-size: 12px;
+	}
+	.module_table .row1,.module_content .row1{
+		word-break: break-all;
+	}
+	.frame_message{
+		width: 55% !important;
+		word-break: break-all;
+		padding-right: 0 !important;
+		padding-bottom: 20px !important;
+	}
+	.frame_date{
+		width: 40% !important;
+		word-break: break-all;
+		padding-right: 0 !important;
+		padding-bottom: 20px !important;
+	}
+	.table_from{
+		width: 18% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_to{
+		width: 18% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_message{
+		width: 40% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_read{
+		width: 10% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_sent{
+		width: 14% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.index_message{
+		width: 40% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+}
+
+/*tablet devices*/
+@media only screen and (min-width: 751px) and (max-width: 982px){
+    #wrapper{
+        margin: 0px;
+    }
+    .breadcrumbs{
+        padding: 15px;
+    }
+    #content{
+        width: 92%;
+    }
+    #leftcontent{
+        width: 30%;
+    	padding-right: 3%;
+    	padding-left: 0px;
+    }
+    .feature-disabled{
+    	margin-top: 0px;
+    }
+    .admin_title_bg{
+    	padding-bottom: 0px;
+	    width: 100%;
+	    margin-bottom: 0px;
+	    padding-top: 0px;
+    }
+    #rightcontent{
+        width: 67%;
+        left: 0px;
+    }
+    .notify-msg{
+        width: 100%;
+    }
+    .row .title_bg{
+        width: 100%;
+    }
+    .title_bg{
+        width: 100%;
+    }
+    iframe{
+        width: 100% !important;
+    }
+    .footer{
+        height: auto;
+	    padding: 15px 5%;
+	    float: left;
+	    width: 90%;
+    }
+    .h-0{
+    	height: auto !important;
+    }
+    .selectionText, .selectionArea{
+        width: 96% !important;
+    	padding: 6px 2% !important;
+    }
+    .selectionBox dt{
+        width: 30%;
+        padding-right: 5%;
+    }
+    .selectionBox dd{
+        width: 65%;
+    }
+    .selectionBox select{
+        width: 100% !important;
+    }
+    .breadcrumbs_container{
+        width: 100%;
+    }
+    .footercontent{
+    	width: 100%;
+    }
+    .col-2{
+    	width: 100% !important;
+    	height: auto !important;
+    	margin-bottom: 15px;
+    }
+    table.mceLayout, textarea.richEditor {
+       width: 100% !important;
+    }
+    .selectionBox dt label{
+    	margin-left: 0px;
+    }
+    .selectionBox dd .explain{
+    	margin-right: 0px;
+    }
+    .slider{
+    	max-width: 90%;
+    	width: 100%;
+    }
+    .slider-number{
+    	top: -15px;
+    	right: -10px;
+    }
+    .secondaryContent{
+    	padding: 15px 7px;
+    }
+    .scrollable h4 a{
+    	padding: 15px 5px;
+    }
+    .success-msg-wrapper{
+    	width: 100%;
+    }
+    #template_data{
+    	padding: 2%;
+    	width: 96%;
+    }
+    #topnavcontent{
+    	width: 100%;
+    }
+    .mceToolbar td {
+		display: inline-block;
+		float: left;
+		min-height: 32px;
+	}
+	.frame_message{
+		width: 55% !important;
+		word-break: break-all;
+		padding-right: 0 !important;
+		padding-bottom: 20px !important;
+	}
+	.frame_date{
+		width: 40% !important;
+		word-break: break-all;
+		padding-right: 0 !important;
+		padding-bottom: 20px !important;
+	}
+	.table_from{
+		width: 15% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_to{
+		width: 15% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_message{
+		width: 40% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_read{
+		width: 10% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.table_sent{
+		width: 10% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+	.index_message{
+		width: 40% !important;
+		word-break: break-all;
+		padding-left: 0 !important;
+	}
+}

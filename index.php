@@ -1,224 +1,207 @@
-<?php include 'db.php'; ?>
+<?php require_once 'auth_company.php'; require_company(); include 'db.php'; ?>
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Task Tracker — Dashboard</title>
+  <title>DoItMeow • Today</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
-    .kpi-card .metric { font-size: 2rem; font-weight: 700; }
-    .kpi-card .sub { color: #6c757d; }
-    .column-card { min-height: 300px; }
-    .task-card { transition: transform .05s ease-in; }
-    .task-card:active { transform: scale(0.99); }
-    .empty { color:#6c757d; font-style: italic; }
-    .kicker { font-weight:600; letter-spacing:.02em; color:#6c757d; }
+    body { background:#f8f9fa; }
+    .kpi .value { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .kpi .sub { font-size:.9rem; color:#6c757d; }
+    .bucket-card { border:0; box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+    .task-card { border-left:4px solid #0d6efd; }
+    .task-card[data-t="Mid-Day"] { border-left-color:#20c997; }
+    .task-card[data-t="Afternoon"] { border-left-color:#fd7e14; }
+    .task-card[data-t="Anytime"] { border-left-color:#6c757d; }
+    .task-title { font-weight:600; }
+    .task-desc { color:#6c757d; font-size:.9rem; margin-bottom:6px; white-space:pre-wrap; word-break:break-word; }
   </style>
 </head>
-<body class="bg-light">
+<body>
 <?php include 'header.php'; ?>
-<div class="container">
-  <div class="d-flex align-items-center justify-content-between mb-3">
-    <h1 class="mb-0">Dashboard</h1>
-    <small class="text-muted">Auto-refreshes every minute</small>
-  </div>
+<div class="container my-3">
 
-  <!-- KPI Cards -->
+  <!-- KPI ROW -->
   <div class="row g-3 mb-3">
-    <div class="col-md-3">
-      <div class="card kpi-card shadow-sm p-3">
-        <div class="sub">Today's Tasks</div>
-        <div class="metric" id="kpiTasksToday">—</div>
-        <div class="sub"><span id="kpiTasksBreakdown">Morning/Mid/After</span></div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card kpi">
+        <div class="card-body d-flex justify-content-between align-items-start">
+          <div>
+            <div class="sub">Total Tasks Today</div>
+            <div class="value" id="kpiTotal">0</div>
+          </div>
+          <div class="text-end">
+            <div class="sub">M / Mid / Aft / Any</div>
+            <div id="kpiTotalBreakdown" class="fw-semibold">0 / 0 / 0 / 0</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card kpi-card shadow-sm p-3">
-        <div class="sub">Completed Today</div>
-        <div class="metric" id="kpiCompletedToday">—</div>
-        <div class="sub"><a href="#" id="viewRecent">view recent</a></div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card kpi">
+        <div class="card-body d-flex justify-content-between align-items-start">
+          <div>
+            <div class="sub">Completed Today</div>
+            <div class="value" id="kpiCompleted">0</div>
+          </div>
+          <a class="small" data-bs-toggle="collapse" href="#completedTodayPanel">View recent</a>
+        </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card kpi-card shadow-sm p-3">
-        <div class="sub">Open Inventory Session</div>
-        <div class="metric" id="kpiInvSession">—</div>
-        <div class="sub" id="kpiInvSub">—</div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card kpi">
+        <div class="card-body">
+          <div class="sub">Open Inventory Sessions</div>
+          <div class="value" id="kpiInvOpen">0</div>
+        </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card kpi-card shadow-sm p-3">
-        <div class="sub">Training Pending</div>
-        <div class="metric" id="kpiTrainingPending">—</div>
-        <div class="sub">All users (templates + custom)</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Activity (hidden until clicked) -->
-  <div class="card mb-3 d-none" id="recentCard">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Recent Task Completions (Today)</h5>
-        <button class="btn btn-sm btn-outline-secondary" id="hideRecent">Hide</button>
-      </div>
-      <div class="table-responsive mt-3">
-        <table class="table table-striped mb-0">
-          <thead><tr><th>Time</th><th>User</th><th>Task</th><th>Timeframe</th></tr></thead>
-          <tbody id="recentRows"></tbody>
-        </table>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card kpi">
+        <div class="card-body">
+          <div class="sub">Trainings Pending</div>
+          <div class="value" id="kpiTrainPending">0</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Three Columns -->
+  <!-- View Recent (collapsible) -->
+  <div class="collapse mb-3" id="completedTodayPanel">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Completed Today</strong>
+        <button class="btn btn-sm btn-outline-secondary" id="refreshCompleted">Refresh</button>
+      </div>
+      <div class="list-group list-group-flush" id="completedList">
+        <div class="list-group-item text-muted">No completions yet today.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOUR BUCKETS -->
   <div class="row g-3">
-    <div class="col-md-4">
-      <div class="card shadow-sm column-card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="kicker">Morning</div>
-            <span class="badge text-bg-secondary" id="badgeMorning">0</span>
-          </div>
-          <div id="colMorning"></div>
-        </div>
+    <div class="col-lg-3">
+      <div class="card bucket-card">
+        <div class="card-header bg-white"><strong>Morning</strong></div>
+        <div class="card-body vstack gap-2" id="colMorning"></div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm column-card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="kicker">Mid-Day</div>
-            <span class="badge text-bg-secondary" id="badgeMid">0</span>
-          </div>
-          <div id="colMid"></div>
-        </div>
+    <div class="col-lg-3">
+      <div class="card bucket-card">
+        <div class="card-header bg-white"><strong>Mid-Day</strong></div>
+        <div class="card-body vstack gap-2" id="colMid"></div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm column-card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="kicker">Afternoon</div>
-            <span class="badge text-bg-secondary" id="badgeAfter">0</span>
-          </div>
-          <div id="colAfter"></div>
-        </div>
+    <div class="col-lg-3">
+      <div class="card bucket-card">
+        <div class="card-header bg-white"><strong>Afternoon</strong></div>
+        <div class="card-body vstack gap-2" id="colAft"></div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Complete Modal -->
-<div class='modal fade' id='completeModal' tabindex='-1'>
-  <div class='modal-dialog'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title'>Complete Task</h5>
-        <button type='button' class='btn-close' data-bs-dismiss='modal'></button>
-      </div>
-      <div class='modal-body'>
-        <label class="form-label">Select your name</label>
-        <select id='userSelect' class='form-select mb-3'></select>
-        <input type='hidden' id='taskId'>
-      </div>
-      <div class='modal-footer'>
-        <button class='btn btn-secondary' data-bs-dismiss='modal'>Cancel</button>
-        <button class='btn btn-primary' id='confirmComplete'>Mark Complete</button>
+    <div class="col-lg-3">
+      <div class="card bucket-card">
+        <div class="card-header bg-white"><strong>Anytime</strong></div>
+        <div class="card-body vstack gap-2" id="colAny"></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function loadKPIs(){
-  $.getJSON('api_dashboard.php?action=kpis', function(d){
-    // Tasks
-    $('#kpiTasksToday').text(d.tasks_today.total);
-    $('#kpiTasksBreakdown').text(d.tasks_today.morning + ' / ' + d.tasks_today.midday + ' / ' + d.tasks_today.afternoon);
-    // Completed today
-    $('#kpiCompletedToday').text(d.completed_today.total);
-    const tb = $('#recentRows').empty();
-    (d.completed_today.recent || []).forEach(r => {
-      tb.append('<tr><td>'+r.completed_at+'</td><td>'+r.user_name+'</td><td>'+r.title+'</td><td>'+r.timeframe+'</td></tr>');
-    });
-    // Inventory session
-    if(d.inventory.open){
-      $('#kpiInvSession').text('#' + d.inventory.id);
-      $('#kpiInvSub').text('Started ' + d.inventory.started_at);
-    } else {
-      $('#kpiInvSession').text('None');
-      $('#kpiInvSub').text('No open session');
-    }
-    // Training pending
-    $('#kpiTrainingPending').text(d.training.pending_total || 0);
-  });
-}
-$('#viewRecent').on('click', function(e){ e.preventDefault(); $('#recentCard').removeClass('d-none'); });
-$('#hideRecent').on('click', function(){ $('#recentCard').addClass('d-none'); });
+$.ajaxSetup({ cache:false });
 
-function renderTasks(tasks){
-  const buckets = { 'Morning': [], 'Mid-Day': [], 'Afternoon': [] };
-  tasks.forEach(t => { if (buckets[t.timeframe]) buckets[t.timeframe].push(t); });
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
 
-  function build(list, targetSel, badgeSel){
-    const target = $(targetSel).empty();
-    $(badgeSel).text(list.length);
-    if (!list.length){
-      target.append('<div class="empty">No tasks.</div>');
-      return;
-    }
-    list.forEach(t => {
-      const card = $(`<div class="card task-card mb-2">
-        <div class="card-body">
-          <h6 class="card-title mb-1">${t.title}</h6>
-          ${t.description ? `<div class="text-muted small mb-2">${t.description}</div>` : ''}
-          <button class="btn btn-sm btn-success completeBtn" data-id="${t.id}">Mark Complete</button>
+function canAct(){ return !!(window.WHOAMI && window.WHOAMI.user); }
+
+function renderTask(t){
+  const disabled = canAct() ? '' : 'disabled';
+  const el = $(`
+    <div class="card task-card" data-t="${t.timeframe}">
+      <div class="card-body py-2">
+        <div class="task-title">${escapeHtml(t.title)}</div>
+        <div class="task-desc">${escapeHtml(t.description || '')}</div>
+        ${t.assigned_user_name ? `<div class="small mt-1"><span class="badge bg-light text-dark">Assigned: ${escapeHtml(t.assigned_user_name)}</span></div>` : ''}
+        <div class="mt-2">
+          <button class="btn btn-sm btn-success completeBtn" ${disabled} data-id="${t.id}">Mark Complete</button>
         </div>
-      </div>`);
-      target.append(card);
+      </div>
+    </div>`);
+  el.find('.completeBtn').on('click', function(){
+    const taskId = $(this).data('id');
+    $.post('api_mt.php?action=markComplete', {task_id: taskId}, function(){
+      loadAll();
+    }).fail(function(xhr){
+      alert('Error: ' + (xhr.responseText || 'failed'));
     });
-  }
-
-  build(buckets['Morning'], '#colMorning', '#badgeMorning');
-  build(buckets['Mid-Day'], '#colMid', '#badgeMid');
-  build(buckets['Afternoon'], '#colAfter', '#badgeAfter');
+  });
+  return el;
 }
 
 function loadTasks(){
-  $.getJSON('api.php?action=getTasks', function(tasks){
-    renderTasks(tasks);
+  return $.getJSON('api_mt.php?action=getTasks&t='+Date.now(), function(rows){
+    $('#colMorning,#colMid,#colAft,#colAny').empty();
+    rows.forEach(t => {
+      const card = renderTask(t);
+      if (t.timeframe==='Morning') $('#colMorning').append(card);
+      else if (t.timeframe==='Mid-Day') $('#colMid').append(card);
+      else if (t.timeframe==='Afternoon') $('#colAft').append(card);
+      else $('#colAny').append(card);
+    });
   });
 }
 
-function loadUsers(){
-  $.getJSON('api.php?action=getUsers', function(users){
-    $('#userSelect').html(users.map(u => `<option value='${u.id}'>${u.name}</option>`));
+function loadCompleted(){
+  return $.getJSON('api_mt.php?action=recentCompletions&t='+Date.now(), function(rows){
+    const list = $('#completedList').empty();
+    if (!rows.length){
+      list.append('<div class="list-group-item text-muted">No completions yet today.</div>');
+      return;
+    }
+    rows.forEach(r => {
+      const item = $(`
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-semibold">${escapeHtml(r.title || '(deleted task)')}</div>
+            <div class="small text-muted">${escapeHtml(r.completed_by || 'Unknown')} • ${escapeHtml(r.timeframe || '')} • ${escapeHtml(r.completed_at)}</div>
+          </div>
+          <button class="btn btn-sm btn-outline-danger undoBtn" data-task="${r.task_id}">Undo</button>
+        </div>`);
+      item.find('.undoBtn').on('click', function(){
+        const tid = $(this).data('task');
+        $.post('api_mt.php?action=uncompleteTask', {task_id: tid}, function(){ loadAll(); });
+      });
+      list.append(item);
+    });
   });
 }
 
-$(document).on('click', '.completeBtn', function(){
-  $('#taskId').val($(this).data('id'));
-  new bootstrap.Modal($('#completeModal')).show();
-});
-
-$('#confirmComplete').on('click', function(){
-  $.post('api.php?action=markComplete', {
-    task_id: $('#taskId').val(),
-    user_id: $('#userSelect').val()
-  }, function(){
-    bootstrap.Modal.getInstance($('#completeModal')).hide();
-    loadTasks(); // refresh lists
-    loadKPIs();  // update KPI counts & recents
+function loadKpis(){
+  return $.getJSON('api_mt.php?action=dashboardStats&t='+Date.now(), function(s){
+    const tb = s.total_by_timeframe || {};
+    const totalAll = (tb.Morning||0)+(tb['Mid-Day']||0)+(tb.Afternoon||0)+(tb.Anytime||0);
+    $('#kpiTotal').text(totalAll);
+    $('#kpiTotalBreakdown').text(`${tb.Morning||0} / ${tb['Mid-Day']||0} / ${tb.Afternoon||0} / ${tb.Anytime||0}`);
+    $('#kpiCompleted').text(s.completed_today ?? 0);
+    $('#kpiInvOpen').text(s.open_inventory_sessions ?? 0);
+    $('#kpiTrainPending').text(s.trainings_pending ?? 0);
   });
-});
+}
+
+function loadAll(){ loadTasks(); loadCompleted(); loadKpis(); }
 
 $(function(){
-  loadUsers();
-  loadTasks();
-  loadKPIs();
-  setInterval(function(){ loadTasks(); loadKPIs(); }, 60000);
+  // When header updates whoami, re-render buttons enable/disable by reloading tasks
+  document.addEventListener('whoami:changed', function(){ loadTasks(); });
+
+  $('#refreshCompleted').on('click', function(){ loadCompleted(); });
+
+  loadAll();
+  setInterval(function(){ loadAll(); }, 60000);
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

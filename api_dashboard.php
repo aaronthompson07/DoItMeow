@@ -9,9 +9,9 @@ if ($action === 'kpis') {
   $weekday = date('w');
   $day = date('j');
 
-  // Tasks visible today
-  $res = $conn->query("SELECT timeframe, type, start_date, end_date, id FROM tasks");
-  $counts = ['Morning'=>0, 'Mid-Day'=>0, 'Afternoon'=>0];
+  // Tasks visible today (excluding completed today and soft-deleted)
+  $res = $conn->query("SELECT id, timeframe, type, start_date, end_date FROM tasks WHERE deleted_at IS NULL");
+  $counts = ['Morning'=>0, 'Mid-Day'=>0, 'Afternoon'=>0, 'Anytime'=>0];
   while($r = $res->fetch_assoc()){
     $show=false;
     if($r['type']==='single' && $r['start_date']===$today) $show=true;
@@ -19,7 +19,6 @@ if ($action === 'kpis') {
     if($r['type']==='weekly' && date('w', strtotime($r['start_date']))==$weekday && $r['start_date']<= $today && (empty($r['end_date'])||$r['end_date']>= $today)) $show=true;
     if($r['type']==='monthly' && date('j', strtotime($r['start_date']))==$day && $r['start_date']<= $today && (empty($r['end_date'])||$r['end_date']>= $today)) $show=true;
     if($show){
-      // Exclude tasks completed today
       $tid = intval($r['id']);
       $done = $conn->query("SELECT 1 FROM task_completions WHERE task_id=$tid AND DATE(completed_at)=CURDATE() LIMIT 1");
       if(!$done->num_rows && isset($counts[$r['timeframe']])) $counts[$r['timeframe']]++;
@@ -44,16 +43,17 @@ if ($action === 'kpis') {
   $inv_row = $inv->fetch_assoc();
   $inventory = $inv_row ? ['open'=>true, 'id'=>intval($inv_row['id']), 'started_at'=>$inv_row['started_at']] : ['open'=>false];
 
-  // Training pending (templates + custom)
+  // Training pending
   $tmpl_pending = $conn->query("SELECT COUNT(*) AS c FROM training_assignments WHERE completed_at IS NULL")->fetch_assoc()['c'] ?? 0;
   $cust_pending = $conn->query("SELECT COUNT(*) AS c FROM custom_training_tasks WHERE completed_at IS NULL")->fetch_assoc()['c'] ?? 0;
 
   out([
     'tasks_today' => [
-      'total' => $counts['Morning'] + $counts['Mid-Day'] + $counts['Afternoon'],
+      'total' => $counts['Morning'] + $counts['Mid-Day'] + $counts['Afternoon'] + $counts['Anytime'],
       'morning' => $counts['Morning'],
       'midday' => $counts['Mid-Day'],
-      'afternoon' => $counts['Afternoon']
+      'afternoon' => $counts['Afternoon'],
+      'anytime' => $counts['Anytime']
     ],
     'completed_today' => [
       'total' => intval($total_completed_today),
